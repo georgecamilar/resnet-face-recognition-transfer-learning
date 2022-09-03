@@ -15,6 +15,7 @@ class FaceRecognitionNet(object):
     def __init__(self) -> None:
         try:
             self.model = tf.keras.models.load_model(SAVED_MODEL_PATH)
+            self.model.summary()
         except Exception as e:
             error_message = GIVEN_ERROR_IS_MESSAGE_TEMPLATE.format(message=str(e))
             sys.exit(error_message)
