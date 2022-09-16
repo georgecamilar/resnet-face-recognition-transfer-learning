@@ -34,9 +34,18 @@ function credentialsPost(evt) {
         processData: false,
         contentType: false,
         cache: false,
+        success: function(event){
+            console.log(event);
+            debugger;
+            alert(event.status);
+        },
+        error: function(event){
+            console.log(event);
+            debugger;
+            alert(event.status);
+        },
         enctype: 'multipart/form-data'
-    }).onsuccess(() => console.log("request succeeded"))
-        .fail(() => console.log("request failed"));
+    });
 }
 
 connectCameraToVideoElement();

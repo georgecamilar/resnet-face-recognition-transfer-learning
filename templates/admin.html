@@ -8,8 +8,9 @@
 </head>
 <body>
 <!--    train button for train request  -->
+<h3>Please input at least 4-5 photos with subject in different lighting conditions</h3>
 <form>
-    <label for="files">Select files for training</label>
+    <label for="files">Select files for training:</label>
     <input
             type="file"
             id="files"
@@ -19,7 +20,8 @@
     <br><br><br>
     <label for="name">Name to add as a label to the neural network</label><br>
     <input type="text" id="name"><br>
-    <input type="button" id="add-employee-button">
+    <input type="button" value="Add to list" id="add-employee-button">
+<!--    TODO This needs to trigger the request as admin to create the new employee in the database -->
 </form>
 </body>
 <script async src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>

@@ -26,29 +26,23 @@ def serve_static_files(name) -> Response:
 def image_submit() -> Response:
     if request.method == 'POST':
         try:
-            print('POST is executed')
-            # check username and password
             username = request.form['username']
             password = request.form['password']
             canvas_image = request.form['canvas']
-            file_name = username if username != '' else 'current'
-            file_path = os.path.join(os.getcwd(), "utilityspace/" + file_name + ".jpeg")
-            # create dir if it doesn't exist
-            utils.create_dir_if_doesnt_exist(file_path)
-            utils.save_image_from_image_data(image_data_string=canvas_image, directory=file_path)
-            predicted_class = controller.get_prediction(image_path=file_path)
-            print("This is the predicted class")
-            print(predicted_class)
-            # TODO if predicted class is admin, then redirect to admin html, otherwise, normal login page html
+            file_path = utils.create_photo_file(username=username, canvas_image=canvas_image)
+            # predicted_class = controller.get_prediction(image_path=file_path)
+            login_status = controller.login(username, password, file_path)
+            # print("This is the predicted class")
+            # print(predicted_class)
         except Exception as exception:
             print('Exception in image submit - get prediction. Message {message}'.format(message=str(exception)))
             return jsonify({
                 'status': 'not ok',
-                'code': '500'
+                'code': '403'
             })
         utils.remove_image(image_path=file_path)
         return jsonify({
-            'status': 'ok',
+            'status': login_status,
             'dataurl': canvas_image,
             'username': username,
             'password': password

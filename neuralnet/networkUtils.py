@@ -56,3 +56,12 @@ def get_top_k_results(prediction):
 def create_dir_if_doesnt_exist(dir_path):
     if os.path.isdir(dir_path):
         os.makedirs(dir_path)
+
+
+def create_photo_file(username, canvas_image):
+    file_name = username if username != '' else 'current'
+    file_path = os.path.join(os.getcwd(), "utilityspace/" + file_name + ".jpeg")
+    create_dir_if_doesnt_exist(file_path)
+    save_image_from_image_data(image_data_string=canvas_image, directory=file_path)
+    return file_path
+

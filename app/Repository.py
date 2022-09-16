@@ -1,6 +1,6 @@
 import mysql.connector
 
-
+users_query ='select * from Users where Users.username="%s"'
 class AppRepository:
     def __init__(self):
         # self._connection = self.connect()
@@ -11,22 +11,23 @@ class AppRepository:
         try:
             connection = mysql.connector.connect(
                 host='localhost',
-                username='root',
-                password='george'
+                username='networktest',
+                password='test',
+                port='8889',
+                database='licenta'
             )
             return connection
         except mysql.connector.InterfaceError:
             print('Interface error when connecting to mysql')
             exit(1)
 
-    def search_cookie(self, id):
+    def search_by_username(self, username):
+        connection = self.connect()
         try:
-            if self._connection.connection_id is True:
-                with self._connection.cursor() as cursor:
-                    query = 'SELECT * FROM Sessions WHERE id=%s' % id
-                    result = cursor.execute(query)
-                    if result is not None:
-                        return True
+            cursor = connection.cursor()
+            cursor.execute(users_query % username)
+            result = cursor.fetchall()
+            return result
         except Exception as ex:
             print(ex)
-        return False
+        return {}

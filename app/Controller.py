@@ -19,3 +19,12 @@ class Controller(object):
                 return prediction_id
 
         raise Exception("Cannot find user")
+
+    def login(self, username, password, image_file_path):
+        predicted_class = self.get_prediction(image_path=image_file_path)
+        response_list = self.repository.search_by_username(username)
+        for candidate in response_list:
+            if username == candidate[1] and password == candidate[2] and predicted_class == candidate[3]:
+                login_status = candidate[4] if candidate[4] is not None else 'user'
+                return login_status
+        raise Exception("Login credentials are wrong")
