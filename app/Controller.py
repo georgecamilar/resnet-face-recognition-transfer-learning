@@ -1,6 +1,7 @@
 from app.Repository import AppRepository
 from neuralnet.RefactoredNetwork import FaceRecognitionNet
 import neuralnet.networkUtils as utils
+from app.CustomException import AppException
 
 
 class Controller(object):

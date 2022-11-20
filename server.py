@@ -1,5 +1,3 @@
-import os
-
 import flask
 from flask import Flask
 from flask import request, jsonify, redirect
@@ -30,10 +28,7 @@ def image_submit() -> Response:
             password = request.form['password']
             canvas_image = request.form['canvas']
             file_path = utils.create_photo_file(username=username, canvas_image=canvas_image)
-            # predicted_class = controller.get_prediction(image_path=file_path)
             login_status = controller.login(username, password, file_path)
-            # print("This is the predicted class")
-            # print(predicted_class)
         except Exception as exception:
             print('Exception in image submit - get prediction. Message {message}'.format(message=str(exception)))
             return jsonify({
@@ -49,6 +44,19 @@ def image_submit() -> Response:
         })
 
     return jsonify({'status': 'not ok'})
+
+
+@app.route('/test/facerequest', methods=['POST'])
+def evaluate_image() -> Response:
+    if request.method == 'POST':
+        try:
+            canvas_image = request.form['canvas']
+            file_path = utils.create_photo_file(username='test_photo', canvas_image=canvas_image)
+            prediction_name = controller.get_prediction(file_path)
+            return jsonify({"responseValue": prediction_name})
+        except Exception as ex:
+            print(ex)
+    return jsonify({'responseValue': 'Internal Error'})
 
 
 app.run(host="localhost", port=8080)

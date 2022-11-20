@@ -24,3 +24,6 @@ class FaceRecognitionNet(object):
         image = neuralnet.networkUtils.prepare_image_for_predict(image_path=image_path)
         prediction = self.model.predict(image)
         return prediction
+
+    def train(self):
+        pass

@@ -1,0 +1,10 @@
+#canvas {
+    display: none;
+}
+
+div {
+    width: 50%;
+    display: flex;
+    margin: auto;
+}
+
