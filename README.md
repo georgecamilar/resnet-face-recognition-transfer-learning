@@ -27,6 +27,8 @@ _________________________________________________________________
 
 where the 'net' parameter stands for the resnet
 
+[ResNet](https://www.tensorflow.org/api_docs/python/tf/keras/applications/resnet)
+
 To do List:
 
 * Check predictions of neural network and retrain it if necessary
