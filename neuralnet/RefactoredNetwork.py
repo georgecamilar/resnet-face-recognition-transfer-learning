@@ -26,4 +26,7 @@ class FaceRecognitionNet(object):
         return prediction
 
     def train(self):
+        # TODO Export train.py as a function and call it.
+        # Find a way to save into a new subject for the database
+        # Also, keep checkpoints
         pass

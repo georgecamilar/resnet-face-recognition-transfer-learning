@@ -37,7 +37,8 @@ function credentialsPost(evt) {
         success: function(event){
             console.log(event);
             debugger;
-            alert(event.status);
+            window.location.href = event;
+            // alert(event.status);
         },
         error: function(event){
             console.log(event);
