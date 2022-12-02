@@ -50,7 +50,7 @@ def image_submit() -> Response:
             'dataurl': canvas_image,
             'username': username,
             'htmlcode': redirect(location_addr),
-            'location': location_addr
+            'location': location_addr,
             'password': password
         })
 
