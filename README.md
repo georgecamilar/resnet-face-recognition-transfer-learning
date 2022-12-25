@@ -19,7 +19,7 @@ The network model architecture is a Sequential keras model and the layers are pr
                                                                  
  7. dense_3 (Dense)             (None, 29)                3741      
                                                                  
-=================================================================
+=================================================================\
 Total params: 75,136,413\
 Trainable params: 51,548,701\
 Non-trainable params: 23,587,712
