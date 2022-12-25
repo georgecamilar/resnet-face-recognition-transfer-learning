@@ -2,7 +2,7 @@
 
 import flask
 from flask import Flask
-from flask import request, jsonify, redirect
+from flask import request, jsonify, redirect, flash
 from requests import Response
 
 import neuralnet.networkUtils as utils
@@ -58,7 +58,7 @@ def image_submit() -> Response:
 
 
 def getIndexPageUrl(status):
-    if(status == 'admin'):
+    if status == 'admin':
         return URL_PREFIX + 'admin' + HTML_SUFFIX
     else:
         return URL_PREFIX + 'user' + HTML_SUFFIX
@@ -72,11 +72,24 @@ def evaluate_image() -> Response:
             file_path = utils.create_photo_file(
                 username='test_photo', canvas_image=canvas_image)
             prediction_name = controller.get_prediction(file_path)
+            username = controller.get_username_from_prediction(prediction_name)
             utils.remove_image(image_path=file_path)
-            return jsonify({"responseValue": prediction_name})
+            return jsonify({"responseValue": username})
         except Exception as ex:
             print(ex)
     return jsonify({'responseValue': 'Internal Error'})
+
+
+@app.route('/upload', methods=['POST'])
+def upload_photos() -> Response:
+    if request.method == 'POST':
+        if "file" not in request.files:
+            flash('No files added')
+            return jsonify({'status': 'not ok'})
+
+    return jsonify({
+        'status': 'ok'
+    })
 
 
 app.run(host="localhost", port=8080)

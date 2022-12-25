@@ -1,6 +1,8 @@
 import mysql.connector
 
-users_query ='select * from Users where Users.username="%s"'
+users_query = 'select * from Users where Users.username="%s"'
+
+
 class AppRepository:
     def __init__(self):
         # self._connection = self.connect()
@@ -26,6 +28,21 @@ class AppRepository:
         try:
             cursor = connection.cursor()
             cursor.execute(users_query % username)
+            result = cursor.fetchall()
+            cursor.close()
+            return result
+        except Exception as ex:
+            print(ex)
+        finally:
+            if connection:
+                connection.close()
+        return {}
+
+    def search_by_prediction_name(self, prediction):
+        connection = self.connect()
+        try:
+            cursor = connection.cursor()
+            cursor.execute('SELECT * FROM users where Users.network_name="%s"' % prediction)
             result = cursor.fetchall()
             return result
         except Exception as ex:

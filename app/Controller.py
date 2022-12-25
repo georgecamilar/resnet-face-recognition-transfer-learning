@@ -2,7 +2,7 @@ from app.Repository import AppRepository
 from neuralnet.RefactoredNetwork import FaceRecognitionNet
 import neuralnet.networkUtils as utils
 from app.CustomException import AppException
-
+import os
 
 class Controller(object):
     def __init__(self):
@@ -20,6 +20,17 @@ class Controller(object):
                 return prediction_id
 
         raise Exception("Cannot find user")
+
+    def get_username_from_prediction(self, prediction):
+        default_answer = 'unknown'
+        try:
+            candidates = self.repository.search_by_prediction_name(prediction=prediction)
+            for result in candidates:
+                return result[1] if result[1] is not None and result[1] != '' else default_answer
+        except Exception as ex:
+            print('Error happened in:')
+            print(os.path.abspath(__file__), ex)
+            return default_answer
 
     def login(self, username, password, image_file_path):
         predicted_class = self.get_prediction(image_path=image_file_path)
