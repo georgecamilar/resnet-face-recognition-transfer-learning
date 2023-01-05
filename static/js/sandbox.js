@@ -4,7 +4,7 @@ const videoElement = document.querySelector("#videoFeed");
 const canvas = document.querySelector('#canvas');
 const labelHeader = document.querySelector("#label_header");
 const submitRequestButton = document.querySelector("#submit_button");
-debugger;
+
 function requestEvaluation() {
     const canvasData = getCanvasData(canvas, videoElement);
     const formData = new FormData();
@@ -19,7 +19,9 @@ function requestEvaluation() {
         cache: false,
         success: function (event) {
             console.log(event);
-            labelHeader.innerHTML = event.responseValue;
+            // for now use status
+            // todo change it to creating a table in the page
+            labelHeader.innerHTML = event.status;
         },
         error: function (event) {
             console.log(event);
@@ -30,6 +32,5 @@ function requestEvaluation() {
     });
 }
 
-debugger;
 connectCameraToVideoElement(videoElement);
 submitRequestButton.addEventListener('click', requestEvaluation);

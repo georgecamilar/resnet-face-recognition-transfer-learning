@@ -15,8 +15,13 @@ function connectCameraToVideoElement() {
 
 function getCanvasData() {
     let ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL('image/jpeg');
+}
+
+function clearCanvas() {
+    let ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function credentialsPost(evt) {
@@ -34,15 +39,31 @@ function credentialsPost(evt) {
         processData: false,
         contentType: false,
         cache: false,
-        success: function(event){
-            console.log(event);
-            debugger;
-            window.location.href = event;
-            // alert(event.status);
+        success: function (event) {
+            // TODO: delete the console log events
+            const requestStatus = event.code;
+            if (requestStatus) {
+                if (requestStatus >= 200 && requestStatus < 300) {
+                    alert("Login success!")
+                    window.location.href = event;
+                } else if (requestStatus >= 300 && requestStatus < 400) {
+                    window.location.href = event;
+                    alert("You have been redirected")
+                } else if (requestStatus >= 400 && requestStatus < 500) {
+                    clearCanvas();
+                    alert("Request failed");
+                } else if (requestStatus >= 500 && requestStatus < 600) {
+                    clearCanvas();
+                    alert("Request failed");
+                } else {
+                    //delete canvas
+                    clearCanvas();
+                    alert("Login failed with your credentials!")
+                }
+            }
         },
-        error: function(event){
+        error: function (event) {
             console.log(event);
-            debugger;
             alert(event.status);
         },
         enctype: 'multipart/form-data'

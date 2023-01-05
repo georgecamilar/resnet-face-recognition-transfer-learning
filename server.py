@@ -27,6 +27,7 @@ def serve_static_files(name) -> Response:
 @app.route('/submit', methods=['POST'])
 def image_submit() -> Response:
     if request.method == 'POST':
+        file_path = ""
         try:
             username = request.form['username']
             password = request.form['password']
@@ -41,10 +42,12 @@ def image_submit() -> Response:
                 'status': 'not ok',
                 'code': '403'
             })
-        utils.remove_image(image_path=file_path)
+        finally:
+            if file_path != "":
+                utils.remove_image(image_path=file_path)
         # Make it redirect to the page
         # return redirect(getIndexPageUrl(login_status))
-        location_addr = getIndexPageUrl(login_status)
+        location_addr = get_index_page_url(login_status)
         return jsonify({
             'status': login_status,
             'dataurl': canvas_image,
@@ -57,7 +60,7 @@ def image_submit() -> Response:
     return jsonify({'status': 'not ok'})
 
 
-def getIndexPageUrl(status):
+def get_index_page_url(status):
     if status == 'admin':
         return URL_PREFIX + 'admin' + HTML_SUFFIX
     else:
@@ -71,13 +74,19 @@ def evaluate_image() -> Response:
             canvas_image = request.form['canvas']
             file_path = utils.create_photo_file(
                 username='test_photo', canvas_image=canvas_image)
-            prediction_name = controller.get_prediction(file_path)
-            username = controller.get_username_from_prediction(prediction_name)
+            # indices are probabilities
+            # values are the classes of the respective probabilities
+            p_indices, p_values = controller.get_all_predictions_and_percentages(image_path=file_path)
             utils.remove_image(image_path=file_path)
-            return jsonify({"responseValue": username})
+            values = utils.filter_probabilities(p_indices.numpy().tolist()[0] , p_values.numpy().tolist()[0])
+            return jsonify(create_response_body(status_string="ok", classes=values))
         except Exception as ex:
             print(ex)
-    return jsonify({'responseValue': 'Internal Error'})
+    return jsonify(create_response_body("error occured", []))
+
+
+def create_response_body(status_string, classes):
+    return {"status": status_string, "classes": classes}
 
 
 @app.route('/upload', methods=['POST'])

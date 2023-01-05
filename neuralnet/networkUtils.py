@@ -53,6 +53,10 @@ def get_top_k_results(prediction):
     return np.argmax(prediction, axis=1)
 
 
+def get_top_k_result_classes(prediction_tensor):
+    return tf.math.top_k(prediction_tensor, k=10, sorted=True)
+
+
 def create_dir_if_doesnt_exist(dir_path):
     if os.path.isdir(dir_path):
         os.makedirs(dir_path)
@@ -65,3 +69,12 @@ def create_photo_file(username, canvas_image):
     save_image_from_image_data(image_data_string=canvas_image, directory=file_path)
     return file_path
 
+
+def filter_probabilities(network_estimations, class_list):
+    result = {}
+    index = 0
+    for probability in network_estimations:
+        if probability is not None and probability > 0.1:
+            result[get_prediction_id(class_list[index])] = probability
+        index += 1
+    return result

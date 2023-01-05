@@ -1,19 +1,27 @@
+import os
+
+import neuralnet.networkUtils as utils
 from app.Repository import AppRepository
 from neuralnet.RefactoredNetwork import FaceRecognitionNet
-import neuralnet.networkUtils as utils
-from app.CustomException import AppException
-import os
+
 
 class Controller(object):
     def __init__(self):
         self.repository = AppRepository()
         self.network = FaceRecognitionNet()
 
+    def get_all_predictions_and_percentages(self, image_path):
+        try:
+            prediction_tensor = self.network.predict(image_path)
+            indices, values = utils.get_top_k_result_classes(prediction_tensor=prediction_tensor)
+            return indices, values
+        except Exception as ex:
+            print(ex)
+
     def get_prediction(self, image_path):
-        # For now, it prints the prediction, but it should return it and
-        # work with the simple login algorithm to authenticate or not
         prediction_tensor = self.network.predict(image_path)
         identity_predictions = utils.get_top_k_results(prediction_tensor)
+
         for identity in identity_predictions:
             prediction_id = utils.get_prediction_id(identity)
             if prediction_id != -1:
