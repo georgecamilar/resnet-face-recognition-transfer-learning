@@ -38,4 +38,10 @@ To do List:
         * Idea: Here it would be better to always have the trained model in a backup and a way for the admin to swap it. Like, new version is available, please select it.
         * Create workflow maybe to have it swapped? (Unnecessary)
 
-    3. Create a page for the landing page and implement login with both image and credentials. Need db for this.
+
+
+The sandbox page is working and showing all predictions over 1% probability.
+
+The out of the box url is localhost:8080/sandbox.html.
+
+![img.png](img.png)Example of the sandbox prediction

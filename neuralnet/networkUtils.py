@@ -74,7 +74,7 @@ def filter_probabilities(network_estimations, class_list):
     result = {}
     index = 0
     for probability in network_estimations:
-        if probability is not None and probability > 0.1:
+        if probability is not None and probability > 0.01:
             result[get_prediction_id(class_list[index])] = probability
         index += 1
     return result

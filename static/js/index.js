@@ -4,6 +4,7 @@ const usernameTextBox = document.querySelector('#username');
 const passwordTextBox = document.querySelector('#password');
 const canvas = document.querySelector('#canvas');
 
+
 function connectCameraToVideoElement() {
     if (navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({video: true})
