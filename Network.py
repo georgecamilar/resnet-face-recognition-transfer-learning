@@ -13,9 +13,6 @@ def freeze_layers(net):
     return net
 
 
-
-
-
 def create_override(net, classification_case_number):
     return tf.keras.Sequential([
         net,

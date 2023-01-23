@@ -3,7 +3,7 @@ import numpy as np
 from binascii import a2b_base64
 import os
 
-DATASET_DIRECTORY = '/Users/georgecamilar/Documents/ExtendedYaleB'
+DATASET_DIRECTORY = '/Users/georgecamilar/Documents/Personal/ExtendedYaleB'
 
 
 # Network Utils
@@ -23,8 +23,10 @@ def get_classes_dict():
     return data.class_indices
 
 
-def get_prediction_id(predicted_class_number):
-    for key, value in get_classes_dict().items():
+def get_prediction_id(predicted_class_number, dataset_classes=None):
+    if dataset_classes is None:
+        dataset_classes = get_classes_dict()
+    for key, value in dataset_classes.items():
         if value == predicted_class_number:
             return key
     print("Network predicted a number that doesn't exist")
@@ -70,11 +72,14 @@ def create_photo_file(username, canvas_image):
     return file_path
 
 
-def filter_probabilities(network_estimations, class_list):
+def filter_probabilities(network_estimations, class_list, dataset_classlist):
     result = {}
     index = 0
+    print("Network estimations are: ", network_estimations)
+    print("Class list is: ", class_list)
     for probability in network_estimations:
+        print("Probability is: ", probability)
         if probability is not None and probability > 0.01:
-            result[get_prediction_id(class_list[index])] = probability
+            result[get_prediction_id(class_list[index], dataset_classes= dataset_classlist)] = probability
         index += 1
     return result

@@ -78,11 +78,13 @@ def evaluate_image() -> Response:
             # values are the classes of the respective probabilities
             p_indices, p_values = controller.get_all_predictions_and_percentages(image_path=file_path)
             utils.remove_image(image_path=file_path)
-            values = utils.filter_probabilities(p_indices.numpy().tolist()[0], p_values.numpy().tolist()[0])
+            values = utils.filter_probabilities(p_indices.numpy().tolist()[0], p_values.numpy().tolist()[0], controller.network.class_indices)
+            # print(values)
             return jsonify(create_response_body(status_string="ok", classes=values))
         except Exception as ex:
-            print(ex)
-    return jsonify(create_response_body("error occured", []))
+            # print(ex)
+            return jsonify(create_response_body("Exception occured", []))
+    
 
 
 def create_response_body(status_string, classes):
