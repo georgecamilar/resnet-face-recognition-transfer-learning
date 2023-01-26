@@ -23,13 +23,6 @@ def create_override(net, classification_case_number):
         tf.keras.layers.Dense(classification_case_number, activation='softmax')
     ])
 
-
-# def read_from_json_file():
-#     with open("train_classes.json") as classes_handle:
-#         data = json.load(classes_handle)
-#         return data
-
-
 def create_image_data_generator(preprocess_function):
     train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
         rescale=1. / 255,
