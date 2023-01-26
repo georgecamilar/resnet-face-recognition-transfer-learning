@@ -6,14 +6,15 @@ from neuralnet.RefactoredNetwork import FaceRecognitionNet
 
 
 class Controller(object):
-    def __init__(self):
+    def __init__(self, base_path):
         self.repository = AppRepository()
-        self.network = FaceRecognitionNet()
+        self.network = FaceRecognitionNet(base_path)
 
     def get_all_predictions_and_percentages(self, image_path):
         try:
             prediction_tensor = self.network.predict(image_path)
-            indices, values = utils.get_top_k_result_classes(prediction_tensor=prediction_tensor)
+            indices, values = utils.get_top_k_result_classes(
+                prediction_tensor=prediction_tensor)
             return indices, values
         except Exception as ex:
             print(ex)
@@ -32,7 +33,8 @@ class Controller(object):
     def get_username_from_prediction(self, prediction):
         default_answer = 'unknown'
         try:
-            candidates = self.repository.search_by_prediction_name(prediction=prediction)
+            candidates = self.repository.search_by_prediction_name(
+                prediction=prediction)
             for result in candidates:
                 return result[1] if result[1] is not None and result[1] != '' else default_answer
         except Exception as ex:

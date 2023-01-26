@@ -1,9 +1,11 @@
 import tensorflow as tf
 import numpy as np
+import json
+
 from binascii import a2b_base64
 import os
 
-DATASET_DIRECTORY = '/Users/georgecamilar/Documents/Personal/ExtendedYaleB'
+DATASET_DIRECTORY = '/Users/georgecamilar/Personal/ExtendedYaleB'
 
 
 # Network Utils
@@ -12,20 +14,28 @@ def prepare_image_for_predict(image_path):
     img = tf.keras.utils.load_img(image_path, target_size=(224, 224))
     img_tensor = tf.keras.preprocessing.image.img_to_array(img)
     img_array_expanded_dims = np.expand_dims(img_tensor, axis=0)
-    preprocessed = tf.keras.applications.resnet50.preprocess_input(img_array_expanded_dims)
+    preprocessed = tf.keras.applications.resnet50.preprocess_input(
+        img_array_expanded_dims)
     return preprocessed
 
 
 def get_classes_dict():
     # create generator to load images and get mappings for images and classes to dictionary
     generator = tf.keras.preprocessing.image.ImageDataGenerator()
-    data = generator.flow_from_directory(DATASET_DIRECTORY, target_size=(224, 224))
+    data = generator.flow_from_directory(
+        DATASET_DIRECTORY, target_size=(224, 224))
     return data.class_indices
+
+
+def read_train_classes():
+    with open("train_classes.json") as classes_handle:
+        data = json.load(classes_handle)
+        return data
 
 
 def get_prediction_id(predicted_class_number, dataset_classes=None):
     if dataset_classes is None:
-        dataset_classes = get_classes_dict()
+        dataset_classes = read_train_classes()
     for key, value in dataset_classes.items():
         if value == predicted_class_number:
             return key
@@ -66,9 +76,11 @@ def create_dir_if_doesnt_exist(dir_path):
 
 def create_photo_file(username, canvas_image):
     file_name = username if username != '' else 'current'
-    file_path = os.path.join(os.getcwd(), "utilityspace/" + file_name + ".jpeg")
+    file_path = os.path.join(
+        os.getcwd(), "utilityspace/" + file_name + ".jpeg")
     create_dir_if_doesnt_exist(file_path)
-    save_image_from_image_data(image_data_string=canvas_image, directory=file_path)
+    save_image_from_image_data(
+        image_data_string=canvas_image, directory=file_path)
     return file_path
 
 
@@ -80,6 +92,7 @@ def filter_probabilities(network_estimations, class_list, dataset_classlist):
     for probability in network_estimations:
         print("Probability is: ", probability)
         if probability is not None and probability > 0.01:
-            result[get_prediction_id(class_list[index], dataset_classes= dataset_classlist)] = probability
+            result[get_prediction_id(
+                class_list[index], dataset_classes=dataset_classlist)] = probability
         index += 1
     return result
