@@ -8,8 +8,8 @@ GIVEN_ERROR_IS_MESSAGE_TEMPLATE = "Cannot load network. If you do not have the t
                                   "script. Given error is: {message} "
 
 # TODO can be changed with the [your_dir]/experiments/saved_model/resnet_saved
-SAVED_MODEL_PATH = "/Users/georgecamilar/Documents/Personal/licenta/notebooks/saved-models/resnet-saved"
-DATASET_PATH = "/Users/georgecamilar/Documents/Personal/ExtendedYaleB"
+SAVED_MODEL_PATH = "/Users/georgecamilar/Personal/licenta/notebooks/saved-models/resnet-saved"
+DATASET_PATH = "/Users/georgecamilar/Personal/ExtendedYaleB"
 
 
 class FaceRecognitionNet(object):

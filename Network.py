@@ -24,10 +24,10 @@ def create_override(net, classification_case_number):
     ])
 
 
-def read_from_json_file():
-    with open("train_classes.json") as classes_handle:
-        data = json.load(classes_handle)
-        return data
+# def read_from_json_file():
+#     with open("train_classes.json") as classes_handle:
+#         data = json.load(classes_handle)
+#         return data
 
 
 def create_image_data_generator(preprocess_function):

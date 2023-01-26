@@ -1,9 +1,11 @@
 import tensorflow as tf
 import numpy as np
+import json
+
 from binascii import a2b_base64
 import os
 
-DATASET_DIRECTORY = '/Users/georgecamilar/Documents/Personal/ExtendedYaleB'
+DATASET_DIRECTORY = '/Users/georgecamilar/Personal/ExtendedYaleB'
 
 
 # Network Utils
@@ -22,10 +24,14 @@ def get_classes_dict():
     data = generator.flow_from_directory(DATASET_DIRECTORY, target_size=(224, 224))
     return data.class_indices
 
+def read_train_classes():
+    with open("train_classes.json") as classes_handle:
+        data = json.load(classes_handle)
+        return data
 
 def get_prediction_id(predicted_class_number, dataset_classes=None):
     if dataset_classes is None:
-        dataset_classes = get_classes_dict()
+        dataset_classes = read_train_classes()
     for key, value in dataset_classes.items():
         if value == predicted_class_number:
             return key
@@ -83,3 +89,5 @@ def filter_probabilities(network_estimations, class_list, dataset_classlist):
             result[get_prediction_id(class_list[index], dataset_classes= dataset_classlist)] = probability
         index += 1
     return result
+
+
