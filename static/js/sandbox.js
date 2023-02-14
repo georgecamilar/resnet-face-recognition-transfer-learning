@@ -27,9 +27,7 @@ function requestEvaluation() {
         contentType: false,
         cache: false,
         success: function (event) {
-            console.log(event);
-            // for now use status
-            // todo change it to creating a table in the page
+            // console.log(event);
             labelHeader.innerHTML = STATUS_CHECK_TEXT_TEMPLATE.replace(STATUS_PLACEHOLDER, event.status);
 
             buildPredictionTable(tableDiv, event.classes);
