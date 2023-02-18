@@ -4,6 +4,25 @@
 
 div {
     width: 50%;
+    margin: auto;
+}
+
+#videoFeed {
     display: flex;
     margin: auto;
+    /* Keep the 224x224 format locked to keep the ratio for the neural network */
+    width: 224px;
+    height: 224px;
+}
+
+.prediction-table {
+    display: flex;
+    width: 50%;
+    margin: auto;
+}
+
+.cmp-submit-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

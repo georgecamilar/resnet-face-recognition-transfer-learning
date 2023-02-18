@@ -82,10 +82,8 @@ def evaluate_image() -> Response:
             utils.remove_image(image_path=file_path)
             values = utils.filter_probabilities(p_indices.numpy().tolist(
             )[0], p_values.numpy().tolist()[0], controller.network.class_indices)
-            # print(values)
             return jsonify(create_response_body(status_string="ok", classes=values))
         except Exception as ex:
-            # print(ex)
             return jsonify(create_response_body("Exception occured", []))
 
 

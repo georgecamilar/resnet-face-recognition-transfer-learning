@@ -1,15 +1,19 @@
-import {connectCameraToVideoElement, getCanvasData} from '/static/js/videoUtils.js';
+import { connectCameraToVideoElement, getCanvasData } from '/static/js/videoUtils.js';
 
 const videoElement = document.querySelector("#videoFeed");
 const canvas = document.querySelector('#canvas');
 const labelHeader = document.querySelector("#label_header");
 const submitRequestButton = document.querySelector("#submit_button");
 const tableDiv = document.querySelector("#table-data");
+
 const NAME_PLACEHOLDER = "${name}";
 const PROBABILITY_PLACEHOLDER = "${probability}";
-const ROW_TEMPLATE = "<tr><td>${name}</td><td>${probability}</td></tr>"
+const ROW_TEMPLATE = "<tr><td>${name}</td><td>${probability}</td></tr>";
 const DATA_PLACEHOLDER = "${dataPlaceholder}";
-const TABLE_TEMPLATE = "<table><tr><th>Name</th><th>Probability</th></tr>${dataPlaceholder}</table>";
+const TABLE_TEMPLATE = "<table class=\"prediction-table\"><tr><th>Name</th><th>Probability</th></tr>${dataPlaceholder}</table>";
+
+const STATUS_CHECK_TEXT_TEMPLATE = "Status is: ${status}";
+const STATUS_PLACEHOLDER = "${status}";
 
 function requestEvaluation() {
     const canvasData = getCanvasData(canvas, videoElement);
@@ -23,10 +27,8 @@ function requestEvaluation() {
         contentType: false,
         cache: false,
         success: function (event) {
-            console.log(event);
-            // for now use status
-            // todo change it to creating a table in the page
-            labelHeader.innerHTML = event.status;
+            // console.log(event);
+            labelHeader.innerHTML = STATUS_CHECK_TEXT_TEMPLATE.replace(STATUS_PLACEHOLDER, event.status);
 
             buildPredictionTable(tableDiv, event.classes);
         },
