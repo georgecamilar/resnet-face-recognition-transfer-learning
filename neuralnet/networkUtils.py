@@ -1,4 +1,5 @@
 import tensorflow as tf
+from tensorflow import keras
 import numpy as np
 import json
 
@@ -6,6 +7,7 @@ from binascii import a2b_base64
 import os
 
 DATASET_DIRECTORY = '/Users/georgecamilar/Personal/ExtendedYaleB'
+HOME_DIRECTORY = '/Users/georgecamilar/Personal/licenta/experiments'
 
 
 # Network Utils
@@ -96,3 +98,59 @@ def filter_probabilities(network_estimations, class_list, dataset_classlist):
                 class_list[index], dataset_classes=dataset_classlist)] = probability
         index += 1
     return result
+
+
+def get_next_saved_model(parent):
+    current_version = 0.0
+    for directory in os.listdir(path=parent):
+        splitted = str(directory).split('-')
+        if len(splitted) <= 1 or splitted[0] != 'version':
+            continue
+        print('Found a good version number: ', directory)
+        version = turn_to_float(splitted[1])
+        if version > current_version:
+            current_version = version
+    # Gradually increase version
+    return current_version
+
+
+def turn_to_float(number):
+    try:
+        return float(number)
+    except ValueError:
+        return 0.0
+
+
+def load_dataset(path):
+    from keras.preprocessing.image import ImageDataGenerator
+    try:
+        generator = tf.keras.preprocessing.image.ImageDataGenerator(
+            height_shift_range=0.2,
+            width_shift_range=0.3,
+            zoom_range=0.2,
+            rotation_range=20,
+            validation_split=0.2,
+            fill_mode='nearest',
+            preprocessing_function=tf.keras.applications.resnet50.preprocess_input,
+        )
+
+        train_generator = generator.flow_from_directory(
+            path,
+            target_size=(224, 224),
+            batch_size=32,
+            shuffle=True,
+            class_mode='categorical',
+            subset='training',
+        )
+
+        validation_generator = generator.flow_from_directory(
+            path,
+            target_size=(224, 224),
+            batch_size=32,
+            shuffle=True,
+            class_mode='categorical',
+            subset='validation'
+        )
+        return train_generator, validation_generator, train_generator.class_indices
+    except Exception as exception:
+        raise Exception(exception)

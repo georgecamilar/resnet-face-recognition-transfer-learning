@@ -6,3 +6,4 @@
 *.pyc
 .project
 .pydevproject
+.mdl_wts.hdf5
