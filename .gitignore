@@ -7,4 +7,4 @@
 .project
 .pydevproject
 **.hdf5
-saved/version-0.1/network_save.h5
+*.h5
