@@ -6,4 +6,5 @@
 *.pyc
 .project
 .pydevproject
-.mdl_wts.hdf5
+**.hdf5
+saved/version-0.1/network_save.h5
