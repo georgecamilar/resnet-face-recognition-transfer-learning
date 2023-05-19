@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Train</title>
+    <link rel="icon" type="image/png" href="static/favicon_io/apple-touch-icon.png" />
+    <link rel="stylesheet" type="text/css" href="static/css/train.css" />
+</head>
+
+<body>
+    <h1 id="train-timer"></h1>
+
+    <div class="cmp-video-container">
+        <video autoplay id="videoFeed" width="224" height="224"></video>
+        <canvas id="canvas" width="224" height="224"></canvas>
+    </div>
+    <div class="subject-name-div">
+        <h2>Name of the subject:</h2>
+        <input type="text" id="subjectName"><br>
+    </div>
+
+    <div class="cmp-submit-button-container">
+        <button id="recordButton">Record</button>
+        <button id="stopButton">Stop</button>
+        <button id="uploadButton" disabled>Upload</button>
+    </div>
+
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="module" src="static/js/train.js"></script>
+
+</html>

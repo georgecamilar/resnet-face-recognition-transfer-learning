@@ -20,7 +20,7 @@ class FaceRecognitionNet(object):
             try:
                 self.base_path = base_path
                 save_directory = os.path.join(neuralnet.networkUtils.HOME_DIRECTORY, 'saved')
-                latest = neuralnet.networkUtils.get_next_saved_model(save_directory)
+                latest = neuralnet.networkUtils.latest_saved_model(save_directory)
                 save_file = os.path.join(save_directory, "version-" + str(latest) + "/" + SAVE_NAME)
                 self.model = tf.keras.models.load_model(save_file)
                 self.class_indices = self.get_dataset_classes()

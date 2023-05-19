@@ -58,6 +58,10 @@ def save_image_from_image_data(image_data_string, directory):
     fh.close()
 
 
+def save_video_from_blob(blob, path):
+    pass
+
+
 def remove_image(image_path):
     if os.path.exists(image_path):
         os.remove(image_path)
@@ -72,7 +76,9 @@ def get_top_k_result_classes(prediction_tensor):
 
 
 def create_dir_if_doesnt_exist(dir_path):
-    if os.path.isdir(dir_path):
+    if not os.path.isdir(dir_path):
+        print('dir does not exist, so we create it.')
+        print('dir path ' + dir_path)
         os.makedirs(dir_path)
 
 
@@ -84,6 +90,17 @@ def create_photo_file(username, canvas_image):
     save_image_from_image_data(
         image_data_string=canvas_image, directory=file_path)
     return file_path
+
+
+def create_video_file(name, video_blob):
+    file_name = name if name != '' else 'current_video'
+    file_path = os.path.join(
+        os.getcwd(), "newEntry/")
+    create_dir_if_doesnt_exist(file_path)
+    # save_image_from_image_data(
+    #     image_data_string=video_blob, directory=file_path)
+    video_blob.save(file_path + file_name + ".webm")
+    return file_path + file_name + ".webm"
 
 
 def filter_probabilities(network_estimations, class_list, dataset_classlist):
@@ -100,7 +117,7 @@ def filter_probabilities(network_estimations, class_list, dataset_classlist):
     return result
 
 
-def get_next_saved_model(parent):
+def latest_saved_model(parent):
     current_version = 0.0
     for directory in os.listdir(path=parent):
         splitted = str(directory).split('-')
@@ -112,6 +129,10 @@ def get_next_saved_model(parent):
             current_version = version
     # Gradually increase version
     return current_version
+
+
+def next_model_version(parent):
+    return latest_saved_model(parent) + 0.1
 
 
 def turn_to_float(number):
