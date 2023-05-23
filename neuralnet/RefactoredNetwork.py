@@ -14,6 +14,7 @@ SAVED_MODEL_PATH = "licenta/backup/resnet-saved"
 DATASET_PATH = "ExtendedYaleB"
 SAVE_NAME = "network_save.h5"
 
+
 class FaceRecognitionNet(object):
     def __init__(self, base_path=None) -> None:
         if base_path is not None:
@@ -22,6 +23,7 @@ class FaceRecognitionNet(object):
                 save_directory = os.path.join(neuralnet.networkUtils.HOME_DIRECTORY, 'saved')
                 latest = neuralnet.networkUtils.latest_saved_model(save_directory)
                 save_file = os.path.join(save_directory, "version-" + str(latest) + "/" + SAVE_NAME)
+                print(f"--- Save file used is: {save_file} ---")
                 self.model = tf.keras.models.load_model(save_file)
                 self.class_indices = self.get_dataset_classes()
             except Exception as e:
@@ -92,12 +94,12 @@ class FaceRecognitionNet(object):
     #
     def create_dataset_generator(self, dataset_path):
         generator = tf.keras.preprocessing.image.ImageDataGenerator(height_shift_range=0.2, validation_split=0.2,
-            preprocessing_function=tf.keras.applications.resnet50.preprocess_input, )
+                                                                    preprocessing_function=tf.keras.applications.resnet50.preprocess_input, )
         train_data_gen = generator.flow_from_directory(dataset_path, target_size=(224, 224), batch_size=32,
-            shuffle=True, class_mode='categorical', subset='training', )
+                                                       shuffle=True, class_mode='categorical', subset='training', )
 
         validation_data_gen = generator.flow_from_directory(dataset_path, target_size=(224, 224), batch_size=32,
-            shuffle=True, class_mode='categorical', subset='validation')
+                                                            shuffle=True, class_mode='categorical', subset='validation')
         return train_data_gen, validation_data_gen, train_data_gen.class_indices
 
     def get_dataset_classes(self):

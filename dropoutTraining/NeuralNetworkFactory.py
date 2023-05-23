@@ -11,7 +11,8 @@ class NeuralNetworkFactory:
 
             save_directory = os.path.join(HOME_DIRECTORY, 'saved')
             name = next_model_version(save_directory)
-            path = os.path.join(save_directory, "version-" + str(name) + "/network_save.h5")
+            final_directory = os.path.join(save_directory, "version-" + str(name))
+            path = os.path.join(final_directory, "network_save.h5")
 
             carry = tf.keras.layers.GlobalAveragePooling2D()(base_model.output)
             carry = tf.keras.layers.Dense(1024, activation="relu")(carry)
@@ -23,7 +24,7 @@ class NeuralNetworkFactory:
             self.model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
             # Create callbacks
-            early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3, verbose=1, mode='auto')
+            early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=1, verbose=1, mode='auto')
             # mcp_save saves -- the model as checkpoints to load faster the desired network variation
             mcp_save = tf.keras.callbacks.ModelCheckpoint(
                 '.mdl_wts.hdf5', save_best_only=True, monitor='val_loss', mode='min')
@@ -35,12 +36,13 @@ class NeuralNetworkFactory:
                            steps_per_epoch=train_datagen.samples // 32,
                            validation_data=validation_generator,
                            validation_steps=validation_generator.samples // 32,
-                           # TODO add the ModelCheckpoint to the neural network learning process
                            callbacks=[reduce_lr_loss, early_stopping],
                            shuffle=True,
                            epochs=10)
-
-            print("Model saved at path: ", path)
+            create_dir_if_doesnt_exist(final_directory)
+            self.next_model_save_path = final_directory + "/network_save.h5"
+            print("Model saved at path: ", self.next_model_save_path)
+            self.model.save(self.next_model_save_path)
 
         except Exception as exception:
             print("Dataset path loading failed: " + str(exception))

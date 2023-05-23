@@ -123,7 +123,6 @@ def latest_saved_model(parent):
         splitted = str(directory).split('-')
         if len(splitted) <= 1 or splitted[0] != 'version':
             continue
-        print('Found a good version number: ', directory)
         version = turn_to_float(splitted[1])
         if version > current_version:
             current_version = version
@@ -132,7 +131,9 @@ def latest_saved_model(parent):
 
 
 def next_model_version(parent):
-    return latest_saved_model(parent) + 0.1
+    value = latest_saved_model(parent) + 0.1
+    print(f"Next model value is: {value}")
+    return value
 
 
 def turn_to_float(number):

@@ -7,17 +7,11 @@ from flask import request, jsonify, redirect, flash
 from requests import Response
 
 import neuralnet.networkUtils as utils
-from app.Controller import Controller
-from neuralnet.FaceDetection import FaceCropper
+from app.InitValues import *
 from dropoutTraining.NeuralNetworkFactory import NeuralNetworkFactory
 
 app = Flask(__name__, static_folder="./static", template_folder="./templates")
-faceCropper = FaceCropper()
-DEFINED_BASE_PATH = "/Users/georgecamilar/Personal"
-controller = Controller(DEFINED_BASE_PATH)
-
-URL_PREFIX = "http://localhost:8080/"
-HTML_SUFFIX = ".html"
+appVariables = AppWrapper()
 
 
 @app.route("/")
@@ -41,7 +35,7 @@ def image_submit() -> Response:
             file_path = utils.create_photo_file(
                 username=username, canvas_image=canvas_image
             )
-            login_status = controller.login(username, password, file_path)
+            login_status = appVariables.controller.login(username, password, file_path)
         except Exception as exception:
             print(
                 "Exception in image submit - get prediction. Message {message}".format(
@@ -86,14 +80,14 @@ def evaluate_image() -> Response:
             )
             # indices are probabilities
             # values are the classes of the respective probabilities
-            p_indices, p_values = controller.get_all_predictions_and_percentages(
+            p_indices, p_values = appVariables.controller.get_all_predictions_and_percentages(
                 image_path=file_path
             )
             utils.remove_image(image_path=file_path)
             values = utils.filter_probabilities(
                 p_indices.numpy().tolist()[0],
                 p_values.numpy().tolist()[0],
-                controller.network.class_indices,
+                appVariables.controller.network.class_indices,
             )
             return jsonify(create_response_body(status_string="ok", classes=values))
         except Exception as ex:
@@ -148,7 +142,11 @@ def add_photos_to_dataset() -> Response:
                     output_directory=save_target_directory,
                 )
 
+                # retrain the network and reinsert into controller the new instance
                 neural_net_factory = NeuralNetworkFactory(utils.DATASET_DIRECTORY)
+                new_model_path = neural_net_factory.next_model_save_path
+                # Reinitialize the controller
+                appVariables.controller = Controller(DEFINED_BASE_PATH)
                 utils.remove_image(video_file_path)
             return jsonify(
                 create_response_body(status_string="post executed", classes=[])
