@@ -1,4 +1,5 @@
 import tensorflow as tf
+from tensorflow import keras
 import numpy as np
 import json
 
@@ -6,6 +7,7 @@ from binascii import a2b_base64
 import os
 
 DATASET_DIRECTORY = '/Users/georgecamilar/Personal/ExtendedYaleB'
+HOME_DIRECTORY = '/Users/georgecamilar/Personal/licenta/experiments'
 
 
 # Network Utils
@@ -56,6 +58,10 @@ def save_image_from_image_data(image_data_string, directory):
     fh.close()
 
 
+def save_video_from_blob(blob, path):
+    pass
+
+
 def remove_image(image_path):
     if os.path.exists(image_path):
         os.remove(image_path)
@@ -70,7 +76,9 @@ def get_top_k_result_classes(prediction_tensor):
 
 
 def create_dir_if_doesnt_exist(dir_path):
-    if os.path.isdir(dir_path):
+    if not os.path.isdir(dir_path):
+        print('dir does not exist, so we create it.')
+        print('dir path ' + dir_path)
         os.makedirs(dir_path)
 
 
@@ -78,10 +86,21 @@ def create_photo_file(username, canvas_image):
     file_name = username if username != '' else 'current'
     file_path = os.path.join(
         os.getcwd(), "utilityspace/" + file_name + ".jpeg")
-    create_dir_if_doesnt_exist(file_path)
+    create_dir_if_doesnt_exist(os.path.join(os.getcwd(), "utilityspace/"))
     save_image_from_image_data(
         image_data_string=canvas_image, directory=file_path)
     return file_path
+
+
+def create_video_file(name, video_blob):
+    file_name = name if name != '' else 'current_video'
+    file_path = os.path.join(
+        os.getcwd(), "newEntry/")
+    create_dir_if_doesnt_exist(file_path)
+    # save_image_from_image_data(
+    #     image_data_string=video_blob, directory=file_path)
+    video_blob.save(file_path + file_name + ".webm")
+    return file_path + file_name + ".webm"
 
 
 def filter_probabilities(network_estimations, class_list, dataset_classlist):
@@ -96,3 +115,64 @@ def filter_probabilities(network_estimations, class_list, dataset_classlist):
                 class_list[index], dataset_classes=dataset_classlist)] = probability
         index += 1
     return result
+
+
+def latest_saved_model(parent):
+    current_version = 0.0
+    for directory in os.listdir(path=parent):
+        splitted = str(directory).split('-')
+        if len(splitted) <= 1 or splitted[0] != 'version':
+            continue
+        version = turn_to_float(splitted[1])
+        if version > current_version:
+            current_version = version
+    # Gradually increase version
+    return current_version
+
+
+def next_model_version(parent):
+    value = latest_saved_model(parent) + 0.1
+    print(f"Next model value is: {value}")
+    return value
+
+
+def turn_to_float(number):
+    try:
+        return float(number)
+    except ValueError:
+        return 0.0
+
+
+def load_dataset(path):
+    from keras.preprocessing.image import ImageDataGenerator
+    try:
+        generator = tf.keras.preprocessing.image.ImageDataGenerator(
+            height_shift_range=0.2,
+            width_shift_range=0.3,
+            zoom_range=0.2,
+            rotation_range=20,
+            validation_split=0.2,
+            fill_mode='nearest',
+            preprocessing_function=tf.keras.applications.resnet50.preprocess_input,
+        )
+
+        train_generator = generator.flow_from_directory(
+            path,
+            target_size=(224, 224),
+            batch_size=32,
+            shuffle=True,
+            class_mode='categorical',
+            subset='training',
+        )
+
+        validation_generator = generator.flow_from_directory(
+            path,
+            target_size=(224, 224),
+            batch_size=32,
+            shuffle=True,
+            class_mode='categorical',
+            subset='validation'
+        )
+        return train_generator, validation_generator, train_generator.class_indices
+    except Exception as exception:
+        raise Exception(exception)

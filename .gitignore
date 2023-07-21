@@ -6,3 +6,5 @@
 *.pyc
 .project
 .pydevproject
+**.hdf5
+*.h5
