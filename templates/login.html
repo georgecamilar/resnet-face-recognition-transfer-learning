@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Index Page</title>
+    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="icon" type="image/png" href="static/favicon_io/apple-touch-icon.png"/>
+</head>
+
+<body>
+<h1>Login with facial recognition</h1>
+<div class="cmp-video-container">
+    <video autoplay id="videoFeed" width="224" height="224"></video>
+</div>
+<!--    <div class="cmp-submit-button-container">-->
+<!--        <button id="trainButton">Train</button>-->
+<!--        <button id="testButton">Test</button>-->
+<!--    </div>-->
+<form>
+    <label for="username">Username</label><br>
+    <input type="text" id="username"><br>
+    <label for="password">Password</label><br>
+    <input type="password" id="password"><br>
+    <input type="button" id="login-submit-button" value="Login">
+</form>
+
+<div class="cmp-submit-button-container">
+    <h2 id="version_tag">Version Tag</h2>
+</div>
+
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="module" src="static/js/index.js"></script>
+
+</html>

@@ -1,4 +1,4 @@
-import { connectCameraToVideoElement, getCanvasData } from '/static/js/videoUtils.js';
+import {connectCameraToVideoElement, getCanvasData} from '/static/js/videoUtils.js';
 
 const videoElement = document.querySelector("#videoFeed");
 const canvas = document.querySelector('#canvas');
@@ -14,6 +14,9 @@ const TABLE_TEMPLATE = "<table class=\"prediction-table\"><tr><th>Name</th><th>P
 
 const STATUS_CHECK_TEXT_TEMPLATE = "Status is: ${status}";
 const STATUS_PLACEHOLDER = "${status}";
+
+const videoUploadElement = document.querySelector("#upload_video");
+
 
 function requestEvaluation() {
     const canvasData = getCanvasData(canvas, videoElement);
@@ -41,6 +44,38 @@ function requestEvaluation() {
     });
 }
 
+function requestEvalVideo() {
+    debugger;
+    const file = document.querySelector("#videoInput").files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        $.ajax({
+            url: '/test/facerequest/video',
+            type: 'post',
+            data: formData,
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: function (event) {
+                // console.log(event);
+                labelHeader.innerHTML = STATUS_CHECK_TEXT_TEMPLATE.replace(STATUS_PLACEHOLDER, event.status);
+
+                buildPredictionTable(tableDiv, event.classes);
+            },
+            error: function (event) {
+                console.log(event);
+                debugger;
+                alert(event.status);
+            },
+            enctype: 'multipart/form-data'
+        });
+    } else {
+        alert('Please select a video file before clicking Upload.');
+    }
+
+}
+
 
 function buildPredictionTable(divElement, queryResults) {
     let append = "";
@@ -53,3 +88,5 @@ function buildPredictionTable(divElement, queryResults) {
 
 connectCameraToVideoElement(videoElement);
 submitRequestButton.addEventListener('click', requestEvaluation);
+
+videoUploadElement.addEventListener('click', requestEvalVideo);

@@ -25,13 +25,9 @@ class NeuralNetworkFactory:
 
             # Create callbacks
             early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=1, verbose=1, mode='auto')
-            # mcp_save saves -- the model as checkpoints to load faster the desired network variation
-            mcp_save = tf.keras.callbacks.ModelCheckpoint(
-                '.mdl_wts.hdf5', save_best_only=True, monitor='val_loss', mode='min')
-            # reduce_lr_loss -- reduces the learning rate when reaching the learning plateau
             reduce_lr_loss = tf.keras.callbacks.ReduceLROnPlateau(
-                monitor='val_loss', factor=0.1, patience=2, verbose=1, min_delta=1e-4, mode='auto')
-            # TODO uncomment when path testing is done
+                monitor='val_loss', factor=0.1, patience=1, verbose=1, min_delta=1e-4, mode='auto')
+
             self.model.fit(train_datagen,
                            steps_per_epoch=train_datagen.samples // 32,
                            validation_data=validation_generator,

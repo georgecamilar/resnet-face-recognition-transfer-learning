@@ -1,28 +1,61 @@
-#canvas {
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-top: 0;
+  }
+
+  h2 {
+    margin: 0;
+  }
+
+  .cmp-video-container {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .cmp-video-container video{
+    display: block;
+    margin: 0 auto;
+  }
+
+  .cmp-video-container canvas {
     display: none;
-}
+  }
 
-div {
-    width: 50%;
-    margin: auto;
-}
+  .subject-name-div {
+    text-align: center;
+    margin-bottom: 20px;
+  }
 
-#videoFeed {
-    display: flex;
-    margin: auto;
-    /* Keep the 224x224 format locked to keep the ratio for the neural network */
-    width: 224px;
-    height: 224px;
-}
+  .subject-name-div input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
 
-.prediction-table {
-    display: flex;
-    width: 50%;
-    margin: auto;
-}
+  .cmp-submit-button-container {
+    text-align: center;
+  }
 
-.cmp-submit-button-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+  .cmp-submit-button-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    background-color: #4CAF50;
+    color: #fff;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  .cmp-submit-button-container button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }

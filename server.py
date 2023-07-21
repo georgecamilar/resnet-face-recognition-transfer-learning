@@ -3,7 +3,7 @@ import os
 
 import flask
 from flask import Flask
-from flask import request, jsonify, redirect, flash
+from flask import request, jsonify, redirect, flash, make_response
 from requests import Response
 
 import neuralnet.networkUtils as utils
@@ -70,6 +70,19 @@ def get_index_page_url(status):
         return URL_PREFIX + "user" + HTML_SUFFIX
 
 
+@app.route("/version", methods=["GET"])
+def get_current_version():
+    if request.method == "GET":
+        try:
+            current_version = str(appVariables.controller.network.currentVersion)
+            return make_response(
+                jsonify({"status": "Done", "version": current_version}), 200
+            )
+        except Exception as ex:
+            print(ex)
+    return make_response(jsonify({"status": "Failed."}), 400)
+
+
 @app.route("/test/facerequest", methods=["POST"])
 def evaluate_image() -> Response:
     if request.method == "POST":
@@ -80,7 +93,10 @@ def evaluate_image() -> Response:
             )
             # indices are probabilities
             # values are the classes of the respective probabilities
-            p_indices, p_values = appVariables.controller.get_all_predictions_and_percentages(
+            (
+                p_indices,
+                p_values,
+            ) = appVariables.controller.get_all_predictions_and_percentages(
                 image_path=file_path
             )
             utils.remove_image(image_path=file_path)
@@ -108,15 +124,43 @@ def upload_photos() -> Response:
     return jsonify({"status": "ok"})
 
 
+@app.route("/test/facerequest/video", methods=["POST"])
+def evaluate_video() -> Response:
+    if request.method == "POST":
+        try:
+            video_file = request.files["file"]
+            if video_file is not None:
+                subject_name = "eval"
+                video_file_path = utils.create_video_file(
+                    name=subject_name, video_blob=request.files.get("file")
+                )
+
+                output_dir_images = "/Users/georgecamilar/Personal/licenta/experiments/resized/images"
+
+                resized = faceCropper.resize_video(video_file_path, output_dir=output_dir_images)
+                print(resized)
+
+                evaluations = []
+
+                for filepath in os.listdir(output_dir_images):
+                    evaluations.append(appVariables.controller.get_all_predictions_and_percentages(filepath))
+
+                # os.system("rm -r " + output_dir_images)
+
+            return jsonify(create_response_body(status_string="ok", classes={}))
+        except:
+            return jsonify(create_response_body(status_string="ok", classes={}))
+
+
 @app.route("/app/uploadVideo", methods=["POST"])
 def add_photos_to_dataset() -> Response:
     """
-        Steps:
-        * video found
-        * save video to local storage temporary folder
-        * get dataset path
-        * get faces from video
-        * save to dataset
+    Steps:
+    * video found
+    * save video to local storage temporary folder
+    * get dataset path
+    * get faces from video
+    * save to dataset
     """
     try:
         if request.method == "POST":
@@ -154,6 +198,40 @@ def add_photos_to_dataset() -> Response:
     except Exception as ex:
         print(str(ex))
         return jsonify(create_response_body(status_string="not post", classes=[]))
+
+
+@app.route("/app/forceTrain", methods=["GET"])
+def force_training() -> Response:
+    neural_net_factory = NeuralNetworkFactory(utils.DATASET_DIRECTORY)
+    new_model_path = neural_net_factory.next_model_save_path
+    # Reinitialize the controller
+    appVariables.controller = Controller(DEFINED_BASE_PATH)
+    return jsonify(create_response_body(status_string="ok", classes=[]))
+
+
+@app.route("/app/uploadVideo/custom", methods=["POST"])
+def load_video() -> Response:
+    # read request values
+    subject_name = (
+        request.form.get("name")
+        if request.form.get("name") is not None
+        else "new"
+    )
+    print(subject_name)
+    if request.files.get("video") is not None:
+        video_file_path = utils.create_video_file(
+            name=subject_name, video_blob=request.files.get("video")
+        )
+        # create new dataset directory for the new subject
+        dataset_path = utils.DATASET_DIRECTORY
+        save_target_directory = os.path.join(dataset_path, subject_name)
+        print("Writing to directory" + save_target_directory)
+        utils.create_dir_if_doesnt_exist(save_target_directory)
+
+        faceCropper.crop_faces_only_from_video(
+            video_path=video_file_path,
+            output_directory=save_target_directory,
+        )
 
 
 app.run(host="localhost", port=8080)
